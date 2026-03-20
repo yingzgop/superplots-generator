@@ -38,9 +38,10 @@ pip install -r requirements.txt
 
 ```python
 from superplots import SuperPlot
+from superplots.visualization import plot_superplot
 
-# 创建图表
-plot = SuperPlot(
+# 创建 SuperPlot
+sp = SuperPlot(
     data="your_data.xlsx",
     x="group",
     y="value",
@@ -49,9 +50,10 @@ plot = SuperPlot(
 )
 
 # 生成图表
-plot.plot(
+plot_superplot(
+    sp,
     output="superplot.png",
-    test="t-test",  # 或 "Mann-Whitney", "ANOVA"
+    test="t-test",
     show_stats=True
 )
 ```
@@ -77,37 +79,29 @@ superplots-generator/
 - ✅ 散点图 + 颜色编码（按实验分组）
 - ✅ 自动计算实验均值和 SEM
 - ✅ 支持多种统计检验（t-test, Mann-Whitney, ANOVA）
-- ✅ 配对/非配对检验
 - ✅ 支持 Excel/CSV 输入
-- ✅ 可自定义配色、标签、风格
 
-## 📝 API 参考
+### 可自定义选项
 
-### SuperPlot 类
+| 类别 | 参数 | 说明 |
+|------|------|------|
+| **图表基础** | `figsize`, `title`, `title_fontsize` | 图表尺寸和标题 |
+| **坐标轴** | `xlabel`, `ylabel`, `xlabel_fontsize`, `ylabel_fontsize`, `xticklabelsize`, `yticklabelsize` | 坐标轴标签和刻度字体 |
+| **点样式** | `point_size`, `mean_marker_size`, `marker_shape` | 散点和均值marker的大小和形状 |
+| **背景网格** | `show_grid`, `grid_linewidth`, `grid_linestyle` | 网格显示和样式 |
+| **边框** | `spines_visible`, `spines_linewidth` | 边框显示和粗细 |
+| **图例** | `show_legend`, `legend_loc`, `legend_fontsize` | 图例显示和位置 |
+| **统计文字** | `pvalue_loc`, `pvalue_fontsize`, `stats_n_loc`, `stats_n_fontsize` | P值和n值的显示位置和字体 |
 
-```python
-SuperPlot(
-    data: str,           # 数据文件路径
-    x: str,              # 分组列名
-    y: str,              # 数值列名
-    experiment_col: str, # 实验编号列名
-    groups: list,        # 要比较的组
-)
-```
+### marker_shape 选项
+- `'o'` - 圆形（默认）
+- `'s'` - 方形
+- `'^'` - 三角形
+- `'D'` - 菱形
 
-### 方法
-
-```python
-# 生成图表
-plot.plot(
-    output: str,         # 输出文件路径
-    test: str,           # 统计检验方法
-    paired: bool,        # 是否配对检验
-    show_stats: bool,    # 是否显示统计结果
-    colors: dict,        # 自定义颜色
-    style: str,          # 图表风格
-)
-```
+### spines_visible 选项
+- 元组格式：`(top, right, bottom, left)`
+- 例如：`(False, False, True, True)` - 只显示下边框和左边框
 
 ## 📦 支持的统计检验
 
@@ -122,6 +116,44 @@ plot.plot(
 ## 🎯 统计可重复性要点
 
 > ⚠️ **重要**：本工具默认按 `experiment_col` 列识别**生物重复**，统计检验使用实验数作为 n，而非细胞数。这符合 SuperPlots 的核心原则。
+
+## 📝 示例代码
+
+详见 `examples/example_basic.py`
+
+```python
+fig = plot_superplot(
+    sp,
+    output='custom_plot.png',
+    test='t-test',
+    show_stats=True,
+    
+    # 基础设置
+    figsize=(6, 5),
+    title='My SuperPlot',
+    title_fontsize=14,
+    ylabel='Fluorescence',
+    ylabel_fontsize=12,
+    
+    # 点样式
+    point_size=80,
+    mean_marker_size=160,
+    marker_shape='o',
+    
+    # 背景和边框
+    show_grid=True,
+    grid_linewidth=0.5,
+    spines_visible=(False, False, True, True),
+    
+    # 图例
+    show_legend=True,
+    legend_loc='upper left',
+    
+    # 统计文字
+    pvalue_loc=(0.5, 0.95),
+    pvalue_fontsize=12,
+)
+```
 
 ## 📚 参考文献
 
